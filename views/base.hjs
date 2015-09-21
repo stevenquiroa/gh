@@ -1,0 +1,10 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+	<title>{{title}} | Guatehandy</title>
+  </head> 
+  <body> 
+  	{{$title}}{{/title}}
+    {{$content}} default content {{/content}} 
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{{<layout}}
+	{{$title}}<h1>{{title}}</h1>{{/title}}
+	{{$content}}
+		<h2>Modulos</h2>
+		<ul>
+			<li><a href="users">Usuarios</a></li>
+			<li><a href="auth">Auth</a></li>
+		</ul>		
+	{{/content}}
+{{/layout}}
