@@ -26,16 +26,16 @@
             facebook.removeEventListener('click', loginFacebook)
             facebook.addEventListener('click', logoutFacebook)
             if (!docCookies.hasItem('NESSION')) {
-                docCookies.setItem('NESSION', window.btoa('fb:'+response.authResponse.userID + ':' + response.authResponse.accessToken))
-                getUserData()
+                docCookies.setItem('NESSION', window.btoa('fb:'+response.authResponse.userID + ':' + response.authResponse.accessToken + ':1'))
+                login()
             }
-            // testAPI()
+            // // testAPI()
         // } else if (response.status === 'not_authorized') {
         //     facebook.innerHTML = 'Login Facebook'
         //     facebook.removeEventListener('click', logoutFacebook)
         //     facebook.addEventListener('click', loginFacebook)
         } else {
-            docCookies.removeItem('NESSION')
+            if (docCookies.hasItem('NESSION')) logout()
             facebook.innerHTML = 'Login Facebook'
             facebook.removeEventListener('click', logoutFacebook)
             facebook.addEventListener('click', loginFacebook)
@@ -43,21 +43,38 @@
     }
 
 
-    function getUserData(){
-        FB.api('/me?fields=id,name,email', function(response){
-            var xhr = new XMLHttpRequest()
-            
-            response.social = 'fb'
-            
-            xhr.open('POST', '/auth/login')
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.responseType = 'json'
-            xhr.send(JSON.stringify(response))
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState != 4 || xhr.status != 200) return;
-                console.log(xhr.response)
-            }
-        })
+    function login(){
+        // FB.api('/me?fields=id,name,email', function(response){
+        var xhr = new XMLHttpRequest()
+        // response
+        // response.social = 'fb'
+        
+        xhr.open('POST', '/auth/login')
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.responseType = 'json'
+        xhr.send()
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState != 4 || xhr.status != 200) return;
+            console.log(xhr.response)
+        }
+        // })
+    }
+
+    function logout () {
+        var xhr = new XMLHttpRequest()
+        // response
+        // response.social = 'fb'
+        
+        xhr.open('POST', '/auth/logout')
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.responseType = 'json'
+        xhr.send()
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState != 4 || xhr.status != 200) return;
+            console.log(xhr.response)
+        }
+                
+
     }
 
     function testAPI() {

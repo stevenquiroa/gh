@@ -11,7 +11,12 @@
 }(document, 'script', 'facebook-jssdk'))
 </script>
 <ul>
-	<li><a href="#" id="login-facebook">Loading Facebook</a></li>
+	{{#auth}}
+		<li><a href="#" id="login-facebook" data-logged="1">Logout Facebook</a></li>
+	{{/auth}}
+	{{^auth}}
+		<li><a href="#" id="login-facebook" data-logged="0">Login Facebook</a></li>
+	{{/auth}}
 	<li><a href="#">Login with Twitter</a></li>
 </ul>
 

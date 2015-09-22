@@ -21,11 +21,12 @@ function logged(req, res, next){
 	} else {
 		var session = new Buffer(req.cookies.NESSION, 'base64').toString("ascii")
 		var key = session.split(":")
-		if (key.length != 3) throw 'La session es falsa'
+		if (key.length < 3) res.clearCookie('NESSION')
 		getSession(key, function (response) {
+			if (!response && key.length < 4) res.clearCookie('NESSION')
 			req.response.auth = response
 			next()
 		})
 	}
-}
+}		
 module.exports = logged
