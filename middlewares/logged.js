@@ -10,7 +10,7 @@ function getSession (key, callback) {
 
 	client.hgetall(user, function (err, reply) {
 		if (err) throw err
-		console.log('getSession')
+		// console.log('getSession')
 		callback(reply)	
 	})
 }

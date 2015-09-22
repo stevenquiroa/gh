@@ -66,7 +66,7 @@ User.prototype.setSession = function (user){
 User.prototype.get = function(username, callback){
 	db.find({username : username}, true, 'Person', function(err, node) {
 		if (err) throw err 
-		console.log(node)
+		// console.log(node)
 		callback(node[0])
 	})
 }
@@ -74,7 +74,7 @@ User.prototype.get = function(username, callback){
 User.prototype.list = function(callback){
 	var response = []
 	db.find({}, 'Person', function(err, nodes){
-		console.log(nodes)
+		// console.log(nodes)
 		callback(nodes)		
 		// console.log(response)
 	})
