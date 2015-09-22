@@ -1,0 +1,26 @@
+{{<layout}}
+{{$title}}<h1>Authorization</h1>{{/title}}
+{{$content}}
+<script>
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0]
+    if (d.getElementById(id)) return
+    js = d.createElement(s); js.id = id
+    js.src = "//connect.facebook.net/en_US/sdk.js"
+    fjs.parentNode.insertBefore(js, fjs)
+}(document, 'script', 'facebook-jssdk'))
+</script>
+<ul>
+	<li><a href="#" id="login-facebook">Loading Facebook</a></li>
+	<li><a href="#">Login with Twitter</a></li>
+</ul>
+
+<div id="status">
+</div>
+
+<a href="/">Regresar</a>
+{{/content}}
+{{$scripts}}
+<script type="text/javascript" src="/javascripts/facebook.js"></script>
+{{/scripts}}
+{{/layout}}

@@ -1,34 +1,31 @@
 var express = require('express')
 var router = express.Router()
 
-var Article = require('../models/users')
-var model = new Article()
-
-var response = {
-	title: 'Authorization', 
-	partials : {
-  		layout : 'base'
-  	}
-}
+var User = require('../models/users')
+var UserModel = new User()
 
 /* GET home page. */
-router.get('/login', function(req, res, next) {
-	model.list(function(users) {
-	  	response.users = users
-	  	res.render('users/index', response)
-	})
+router.get('/', function(req,res){
+	req.response.title = 'Login'
+	console.log(req.response)
+	res.render('auth/index', req.response)
 })
 
-router.get('/register', function(req, res, next) {
-	var username = req.params.user
-	if (!username) return next()
-
-	model.get(username,function (user) {
-		// response.username = user
-		console.log(user)
-		response.user = user
-		res.render('users/show', response)
-	})
+router.post('/login', function(req, res) {
+	if (!req.body) throw 'Body no existe'
+	var session = new Buffer(req.cookies.NESSION, 'base64').toString("ascii")
+	var key = session.split(":")
+	if (key[0] + key[1] === req.body.social + req.body.id){
+		var user = req.body
+		user.token = key[2]
+		UserModel.createIfNotExist(user,function (response) {
+			UserModel.setSession(response.data)
+			res.status(response.status).json(response.data)
+		})
+	} else {
+		throw 'Error en autenticacion' 
+		res.status(400).json({error:'Error en autenticacion'})
+	}
 })
 
 module.exports = router

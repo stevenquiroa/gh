@@ -1,21 +1,16 @@
 var express = require('express')
 var router = express.Router()
 
-var Article = require('../models/users')
-var model = new Article()
-
-var response = {
-	title: 'Usuarios', 
-	partials : {
-  		layout : 'base'
-  	}
-}
+var User = require('../models/users')
+var UserModel = new User()
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	model.list(function(users) {
-	  	response.users = users
-	  	res.render('users/index', response)
+	req.response.title = 'Listado de Usuarios'
+	UserModel.list(function(users) {
+	  	req.response.users = users
+	  	console.log(req.response)
+	  	res.render('users/index', req.response)
 	})
 })
 
@@ -23,11 +18,12 @@ router.get('/:user', function(req, res, next) {
 	var username = req.params.user
 	if (!username) return next()
 
-	model.get(username,function (user) {
+	req.response.title = 'Usuario: ' + username
+	UserModel.get(username,function (user) {
 		// response.username = user
 		console.log(user)
-		response.user = user
-		res.render('users/show', response)
+		req.response.user = user
+		res.render('users/show', req.response)
 	})
 })
 

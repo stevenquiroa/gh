@@ -5,6 +5,14 @@
   </head> 
   <body> 
   	{{$title}}{{/title}}
-    {{$content}} default content {{/content}} 
+    {{$content}}<p>Template Vacio</p>	{{/content}} 
+    {{#auth}}
+		<p>Usuario: <b>{{username}}</b>, Nombre: <b>{{name}}</b>, Red Social:{{social}}</p>
+	{{/auth}}
+	{{^auth}}
+	<p>Usuario no loguedo :( </p>
+	{{/auth}}
+    <script src="/javascripts/cookies.js"></script>
+    {{$scripts}}{{/scripts}}
   </body>
 </html>
