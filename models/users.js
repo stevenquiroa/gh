@@ -59,7 +59,7 @@ User.prototype.setSession = function (user){
 	client.on("error", function (err) {
 		if (err) throw err
 	})
-	if (!user.social_id) throw 'Error in user: ' + user
+	if (!user.social_id) throw user
 	client.hmset(user.social + user.social_id, user, redis.print)	
 }
 

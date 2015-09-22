@@ -10,6 +10,7 @@ function getSession (key, callback) {
 
 	client.hgetall(user, function (err, reply) {
 		if (err) throw err
+		console.log('getSession')
 		callback(reply)	
 	})
 }
@@ -23,7 +24,7 @@ function logged(req, res, next){
 		var key = session.split(":")
 		if (key.length < 3) res.clearCookie('NESSION')
 		getSession(key, function (response) {
-			if (!response && key.length < 4) res.clearCookie('NESSION')
+			if (!response && key.length < 4) {res.clearCookie('NESSION'); res.clearCookie('NESSION', {'path':'/auth'})}
 			req.response.auth = response
 			next()
 		})

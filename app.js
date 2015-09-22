@@ -7,8 +7,8 @@ var bodyParser = require('body-parser')
 
 var logged = require('./middlewares/logged')
 var routes = require('./routes/index')
-var users = require('./routes/users')
 var auth = require('./routes/auth')
+var users = require('./routes/users')
 
 var app = express()
 

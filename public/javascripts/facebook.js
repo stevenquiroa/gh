@@ -26,6 +26,7 @@
             facebook.removeEventListener('click', loginFacebook)
             facebook.addEventListener('click', logoutFacebook)
             if (!docCookies.hasItem('NESSION')) {
+                console.log('setcookie')
                 docCookies.setItem('NESSION', window.btoa('fb:'+response.authResponse.userID + ':' + response.authResponse.accessToken + ':1'))
                 login()
             }
@@ -49,7 +50,7 @@
         // response
         // response.social = 'fb'
         
-        xhr.open('POST', '/auth/login')
+        xhr.open('POST', '/auth/session')
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.responseType = 'json'
         xhr.send()
@@ -65,7 +66,7 @@
         // response
         // response.social = 'fb'
         
-        xhr.open('POST', '/auth/logout')
+        xhr.open('DELETE', '/auth/session')
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.responseType = 'json'
         xhr.send()

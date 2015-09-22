@@ -11,24 +11,24 @@ router.get('/', function(req,res){
 	res.render('auth/index', req.response)
 })
 
-router.post('/login', function(req, res) {
+router.post('/session', function(req, res) {
 	// if (!req.body) throw 'Body no existe'
 	var session = new Buffer(req.cookies.NESSION, 'base64').toString("ascii")
 	var key = session.split(":")
 	var user = {id : key[1],social : key[0],token : key[2]}
 	UserModel.createIfNotExist(user,function (response) {
-		UserModel.setSession(response.data)
-		res.cookie(key[0] + ':' + key[1] + ':' + key[2])
+		if (response.status == 200) UserModel.setSession(response.data)
+		res.cookie('NESSION', new Buffer(key[0] + ':' + key[1] + ':' + key[2]).toString('base64'))
 		res.status(response.status).json(response.data)
 	})
 })
 
-router.post('/logout', function(req, res) {
+router.delete('/session', function(req, res) {
 	var session = new Buffer(req.cookies.NESSION, 'base64').toString("ascii")
 	var key = session.split(":")
 	var user = {id : key[1],social : key[0],token : key[2]}
 	UserModel.destroySession(user, function (response) {
-		if (response.status = 200) res.clearCookie('NESSION')
+		if (response.status == 200) res.clearCookie('NESSION')
 		res.status(response.status).json(response.data)
 	})
 })

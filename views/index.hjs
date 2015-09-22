@@ -5,6 +5,7 @@
 		<ul>
 			<li><a href="users">Usuarios</a></li>
 			<li><a href="auth">Auth</a></li>
+			<li><a href="upload">Post</a></li>
 		</ul>		
 	{{/content}}
 {{/layout}}
