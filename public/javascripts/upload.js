@@ -16,12 +16,12 @@
         return true
     }
 
-    function uploadPost (self) {
+    function uploadPost (self, files) {
         status.innerHTML = 'Ya casi...'
         var xhr = new XMLHttpRequest()
         var data = {}    
 
-        data.files = [xhr.response]
+        data.files = files
         data.title = self['title'].value
         data.source = self['source'].value
         data.social = self['social'].value
@@ -37,6 +37,8 @@
     }
 
     function uploadImage (self, callback) {
+        console.log(self['file'].files)
+        if (!self['file'].files.length) callback(self, []);
         var xhr = new XMLHttpRequest()
         var data = new FormData()
         status.innerHTML = 'Cargando...'
@@ -47,7 +49,7 @@
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4 || xhr.status != 200) return;
             console.log(xhr.response)
-            if (typeof callback == 'function') callback(self)
+            if (typeof callback == 'function') callback(self, [xhr.response])
         }
     }
 
