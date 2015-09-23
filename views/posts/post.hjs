@@ -1,0 +1,19 @@
+{{<layout}}
+	{{$title}}<h1>{{title}}</h1>{{/title}}
+	{{$content}}
+		<form action="." name="uploads" id="uploads">
+			<p>Titulo: *
+				<input type="text" name="title" id="title">
+			</p>
+			<p>Fuente: *<input type="url" name="source" id="source"></p>
+			<p>Social: <span id="social-show"></span><input type="hidden" name="social" id="social"></p>
+			<p>Archivo: <input type="file" name="file" id="file" accept=".jpg,.jpeg,.png,.gif"></p>
+			<p><input type="submit" value="Subir"></p>
+		</form>
+		<p id="status"></p>
+		<a href="../">Regresar</a>
+	{{/content}}
+	{{$scripts}}
+		<script src="/javascripts/upload.js"></script>
+	{{/scripts}}
+{{/layout}}

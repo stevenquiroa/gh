@@ -9,6 +9,8 @@ var logged = require('./middlewares/logged')
 var routes = require('./routes/index')
 var auth = require('./routes/auth')
 var users = require('./routes/users')
+var posts = require('./routes/posts')
+var files = require('./routes/files')
 
 var app = express()
 
@@ -20,7 +22,7 @@ app.set('view engine', 'hjs')
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(logger('dev'))
 app.use(bodyParser.json())  
-app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -37,6 +39,8 @@ app.use(logged)
 
 app.use('/', routes)
 app.use('/users', users)
+app.use('/posts', posts)
+app.use('/files', files)
 app.use('/auth', auth)
 
 // catch 404 and forward to error handler
