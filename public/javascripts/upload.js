@@ -16,45 +16,52 @@
         return true
     }
 
-    function uploadPost (evt) {
+    function uploadPost (self) {
+        status.innerHTML = 'Ya casi...'
+        var xhr = new XMLHttpRequest()
+        var data = {}    
+
+        data.files = [xhr.response]
+        data.title = self['title'].value
+        data.source = self['source'].value
+        data.social = self['social'].value
+        xhr.open('POST', '/posts')
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.responseType = 'json'
+        xhr.send(JSON.stringify(data))
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState != 4 || xhr.status != 200) return;
+            console.log(xhr.response)
+            status.innerHTML = "Listo :)"
+        }
+    }
+
+    function uploadImage (self, callback) {
+        var xhr = new XMLHttpRequest()
+        var data = new FormData()
+        status.innerHTML = 'Cargando...'
+        data.append('file', self['file'].files[0])
+        xhr.open('POST', '/files')
+        xhr.responseType = 'json'
+        xhr.send(data)
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4 || xhr.status != 200) return;
+            console.log(xhr.response)
+            if (typeof callback == 'function') callback(self)
+        }
+    }
+
+    function upload (evt) {
         console.log('uploadPost')
         evt.preventDefault()
-        self = this
-
         if (validateInputs()) {
             console.log('submit file')
-            var xhr = new XMLHttpRequest()
-            var data = new FormData()
-            status.innerHTML = 'Cargando...'
-            data.append('file', self['file'].files[0])
-            xhr.open('POST', '/files')
-            xhr.responseType = 'json'
-            xhr.send(data)
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState != 4 || xhr.status != 200) return;
-                console.log(xhr.response)
-                status.innerHTML = 'Ya casi...'
-                var post = new XMLHttpRequest()
-                var postData = {}    
-
-                postData.files = [xhr.response]
-                postData.title = self['title'].value
-                postData.source = self['source'].value
-                postData.social = self['social'].value
-                post.open('POST', '/posts')
-                post.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-                post.responseType = 'json'
-                post.send(JSON.stringify(postData))
-                post.onreadystatechange = function() {
-                    if (post.readyState != 4 || post.status != 200) return;
-                    console.log(post.response)
-                    status.innerHTML = "Listo :)"
-                }
-            }
+            // uploadImage(this)
+            uploadImage(this, uploadPost)
         }else{
             status.innerHTML = 'Campos requeridos'
         }
     }
 
-    form.addEventListener('submit', uploadPost)
+    form.addEventListener('submit', upload)
 } )( this )
