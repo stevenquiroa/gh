@@ -1,38 +1,44 @@
 var express = require('express')
 var router = express.Router()
 
-// var Busboy = require('busboy')
-// const Post = require('../models/posts')
-// const PostModel = new Post()
 var busboy = require('connect-busboy')
+var uuid = require('uuid')
 var	path = require('path')
 var os = require('os')
 var fs = require('fs')
 
+var FileModel = require('../models/files')
+
 router.use(busboy())
 
 router.post('/', function(req, res) {
-	console.log('busboy')
+	if (!req.response.auth) res.status(403).json({})
+
     req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-    	console.log(fieldname, file, filename, encoding, mimetype)
-		var saveTo = path.join(__dirname, '..', 'public', 'images', path.basename(filename))
-    	console.log(saveTo)
+		// console.log(count)
+    	// console.log(fieldname, file, filename, encoding, mimetype)
+    	var nameFile = path.basename(uuid.v4()) + path.extname(filename)
+		var saveTo = path.join(__dirname, '..', 'public', 'images', nameFile)
+    	// console.log(saveTo)
 		file.pipe(fs.createWriteStream(saveTo))
 		file.on('end', function(){
-			var response = {}
-			response.url = 'http://localhost:3000/images/' + path.basename(filename)
-			response.saveIn = saveTo
-			response.mimetype = mimetype
-    		res.status(200).json(response)
+			var filePost = {}
+			filePost.url = 'http://localhost:3000/images/' + nameFile
+			filePost.path = '/images/' + nameFile
+			filePost.saveIn = saveTo
+			filePost.mimetype = mimetype
+			filePost.original = path.basename(filename)
+			FileModel.save(filePost, function (err, response) {
+				if (err) res.status(500).json({error:err})
+				else {
+					console.log('archivo cargado')
+					res.status(200).json(response)
+				}
+			})
 		})
     })
 
 	req.pipe(req.busboy)
-
-    // req.busboy.on('finish', function() {
-    // 	res.status(200).json({message:true})
-    // });
-	// if (!req.response.auth) res.status(403).json({})
  })
 
 module.exports = router

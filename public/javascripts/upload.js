@@ -2,6 +2,7 @@
     'use strict'
     var form = document.forms['uploads']
     var status = document.getElementById('status')
+    var fileList = []
 
     function validateInputs () {
         console.log('validateInputs')
@@ -20,7 +21,6 @@
         status.innerHTML = 'Ya casi...'
         var xhr = new XMLHttpRequest()
         var data = {}    
-
         data.files = files
         data.title = self['title'].value
         data.source = self['source'].value
@@ -30,36 +30,54 @@
         xhr.responseType = 'json'
         xhr.send(JSON.stringify(data))
         xhr.onreadystatechange = function() {
-            if (xhr.readyState != 4 || xhr.status != 200) return;
+            if (xhr.readyState != 4) return;
+            if (xhr.status == 200) {
+                status.innerHTML = "Listo :)"
+            }else{
+                status.innerHTML = ""
+                for (var i = 0; i < xhr.response.error.length; i++) {
+                    status.innerHTML +=  xhr.response.error[i] + '<br>'
+                }
+            }
             console.log(xhr.response)
-            status.innerHTML = "Listo :)"
         }
     }
 
-    function uploadImage (self, callback) {
-        console.log(self['file'].files)
-        if (!self['file'].files.length) callback(self, []);
+    function uploadImage (self, files, callback) {
+        console.log(fileList)
+        if (fileList.length == 0) {
+            uploadPost(self, files) 
+            return;
+        }
         var xhr = new XMLHttpRequest()
         var data = new FormData()
         status.innerHTML = 'Cargando...'
-        data.append('file', self['file'].files[0])
+        data.append('file', fileList.shift())
         xhr.open('POST', '/files')
         xhr.responseType = 'json'
         xhr.send(data)
         xhr.onreadystatechange = function () {
-            if (xhr.readyState != 4 || xhr.status != 200) return;
+            if (xhr.readyState != 4) return;
             console.log(xhr.response)
-            if (typeof callback == 'function') callback(self, [xhr.response])
+
+            if (xhr.status == 200 && typeof callback == 'function') {
+                files.push(xhr.response)
+                callback(self, files, uploadImage)
+            } else {
+                status.innerHTML = xhr.response.error 
+            }
+            
         }
     }
 
     function upload (evt) {
         console.log('uploadPost')
         evt.preventDefault()
-        if (validateInputs()) {
+        if (validateInputs()) { 
             console.log('submit file')
-            // uploadImage(this)
-            uploadImage(this, uploadPost)
+            for (var i = 0; i < this['file'].files.length; i++)
+                fileList.push(this['file'].files[i])
+            uploadImage(this, [], uploadImage)
         }else{
             status.innerHTML = 'Campos requeridos'
         }
