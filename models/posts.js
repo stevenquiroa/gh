@@ -1,5 +1,6 @@
 const conf = require('../conf')
 const validator = require('validator')
+const waterfall = require('async-waterfall')
 const db = require('seraph')({
 	user : conf.neo.user,
 	pass : conf.neo.pass
@@ -9,70 +10,63 @@ var Post = function (conf){
 	conf = conf || {}
 }
 
-function validate (post, callback) {
+function validate (user, post, files, callback) {
 	var err
 	var response = {}
 	response.data = {}
-	response.error = [] 
-	response.files = []
-	response.user = post.auth
 
 	response.data.title = validator.escape(post.title) 
 	response.data.social = validator.escape(post.social)
-	if (validator.isURL(post.source)) response.data.source = post.source; else response.error.push("Error in source")
-	if (!response.user) response.error.push('Error in auth')
-	if (response.error.length > 0) err = response.error[0]
-	response.files = post.files
-	callback(err, response)
+	if (validator.isURL(post.source)) response.data.source = post.source; else err = "Error in source"
+	if (!user) err = 'Error in auth'
+	callback(err, user, response.data, files)
 }
 
 function postToFiles (post, files, callback) {
-	console.log()
-	var filesRel = []
-	for (var i = 0; i < files.length; i++) {
-		db.relate(post.id, 'IN', files[i].id, function (err, relFile) {
-			filesRel.push(relFile)
-			if (err || i >= files.length) callback(err, filesRel);
-		})
+	console.log('postToFiles')
+	console.log(files)
+	if (files.length > 0){
+		var count = 0
+		for (var i = 0; i < files.length; i++) {
+			db.relate(post.id, 'IN', files[i].id, {count:i}, function (err, relFile) {
+				count++
+				// console.log(relFile.properties.count, files.length, count)
+				if (err || count == files.length) callback(err, post, 'done');
+			})
+		}
+	}else{
+		callback(null, post, 'done')
 	}
 }
 
-function userToPost (user, post, callback) {
+function userToPost (user, post, files, callback) {
 	console.log('userToPost')
-	db.relate(user.id, 'CREATER', post.id, callback)
-}
-
-function create (post, callback) {
-	console.log('create')
-	db.save(post.data, 'Post', function (err, node) {
-		console.log('saved post')
-		post.post = node
-		if (err) {
-			post.error.push(err)
-			callback(err, post)
-		}
-		userToPost(post.user, node, function (err, rel) {
-			if (err) post.error.push(err)
-			post.relationship = rel
-			postToFiles(node, post.files, function (err, files) {
-				if (err) post.error.push(err)
-
-				post.relFiles = files
-				callback(err, post)
-			})	
-		})
+	db.relate(user.id, 'CREATER', post.id, function(err, rel){
+		callback(err, post, files)
 	})
 }
 
-Post.prototype.save = function (post, callback) {
+function create (user, post, files, callback) {
+	console.log('create')
+	db.save(post, 'Post', function (err, node) {
+		console.log('saved post')
+		callback(err, user, node, files)
+	})
+}
+
+Post.prototype.save = function (user, post, files, callback) {
 	var self = this
 	var response = {}
-
-	validate(post, function(err, validatePost){
-		if (err) callback(err, validatePost)
-		create(validatePost, function (err, response) {
-			callback(err, response)
-		})
+	waterfall([
+		function (callback) {callback(null, user, post, files)},
+		validate,
+		create,
+		userToPost,
+		postToFiles
+	],function (err, result) {
+		console.log('finish', err)
+		if (err != null && typeof err == 'object') err = "Problem in database: " + err.code
+		callback(err, result)
 	})
 }
 module.exports = Post
