@@ -19,6 +19,8 @@ function validate (user, post, files, callback) {
 	response.data.social = validator.escape(post.social)
 	if (validator.isURL(post.source)) response.data.source = post.source; else err = "Error in source"
 	if (!user) err = 'Error in auth'
+
+	response.data.timestamp = Date.now()
 	callback(err, user, response.data, files)
 }
 
@@ -66,6 +68,21 @@ Post.prototype.save = function (user, post, files, callback) {
 	],function (err, result) {
 		console.log('finish', err)
 		if (err != null && typeof err == 'object') err = "Problem in database: " + err.code
+		callback(err, result)
+	})
+}
+
+Post.prototype.list = function(page, limit ,callback) {
+	page = (page) ? page * limit : 0
+	var cypher = 'MATCH (n:Person)-[r:CREATER]->(p:Post) '
+			+ 'WHERE HAS(p.timestamp) '
+			+ 'Return DISTINCT p, n, r '
+			+ 'ORDER BY p.timestamp DESC '
+	cypher += 'SKIP ' +  page + ' '
+	cypher += 'LIMIT ' + limit
+	cypher += ';'
+
+	db.query(cypher, function (err, result) {
 		callback(err, result)
 	})
 }

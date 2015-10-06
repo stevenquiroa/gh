@@ -7,10 +7,10 @@ router.get('/', function(req, res) {
 	res.render('index', req.response)
 })
 
-
 router.get('/upload', function (req, res) {
 	if(!req.response.auth) return res.redirect('/auth/')
 	req.response.title = 'Upload post'
 	res.render('posts/post', req.response)
 })
+
 module.exports = router

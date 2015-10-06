@@ -13,6 +13,7 @@
 	<p>Usuario no loguedo :( </p>
 	{{/auth}}
     <script src="/javascripts/cookies.js"></script>
+    <script src="/javascripts/helpers.js"></script>
     {{$scripts}}{{/scripts}}
   </body>
 </html>

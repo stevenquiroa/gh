@@ -1,0 +1,20 @@
+{{<layout}}
+	{{$title}}<h1>{{title}}</h1>{{/title}}
+	{{$content}}
+		<p id="status" style="display:none;"></p>
+		<ul id="posts">
+		{{#posts}}
+			<li><a href="/posts/{{p.id}}">{{p.title}}</a> - {{n.name}}</li>
+		{{/posts}}
+		</ul>
+		{{^posts}}
+			<p>No hay posts :(</p>
+		{{/posts}}
+		<a id="load-more" href="#">Cargar más</a>
+		<br>
+		<a href="../">Regresar</a>
+	{{/content}}
+	{{$scripts}}
+	<script type="text/javascript" src="/javascripts/posts-list.js"></script>
+	{{/scripts}}
+{{/layout}}

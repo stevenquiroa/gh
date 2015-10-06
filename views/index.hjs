@@ -3,9 +3,10 @@
 	{{$content}}
 		<h2>Modulos</h2>
 		<ul>
-			<li><a href="users">Usuarios</a></li>
-			<li><a href="auth">Auth</a></li>
-			<li><a href="upload">Post</a></li>
+			<li><a href="/users">Users</a></li>
+			<li><a href="/auth">Auth</a></li>
+			<li><a href="/upload">Upload</a></li>
+			<li><a href="/posts/list">Posts</a></li>
 		</ul>		
 	{{/content}}
 {{/layout}}

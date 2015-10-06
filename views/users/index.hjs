@@ -1,11 +1,11 @@
 {{<layout}}
 	{{$title}}<h1>{{title}}</h1>{{/title}}
 	{{$content}}
-		{{#users}}
 		<ul>
+		{{#users}}
 			<li><a href="users/{{username}}">{{name}}</a></li>
-		</ul>
 		{{/users}}
+		</ul>
 		<a href="../">Regresar</a>
 	{{/content}}
 {{/layout}}
